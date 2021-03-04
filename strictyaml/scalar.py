@@ -10,6 +10,7 @@ import dateutil.parser
 import decimal
 import sys
 import re
+from ruamel.yaml.comments import CommentedSeq
 from ruamel.yaml.scalarstring import PreservedScalarString
 
 
@@ -82,13 +83,13 @@ class CommaSeparated(ScalarValidator):
 
     def validate_scalar(self, chunk):
         if chunk.contents == "":
-            return []
-        return [
+            return CommentedSeq([])
+        return CommentedSeq([
             self._item_validator.validate_scalar(
                 chunk.textslice(positions[0], positions[1])
             )
             for positions in utils.comma_separated_positions(chunk.contents)
-        ]
+        ])
 
     def to_yaml(self, data):
         if isinstance(data, list):
